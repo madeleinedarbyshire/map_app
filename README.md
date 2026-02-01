@@ -2,31 +2,31 @@
 
 This app allows users to search for features in aerial imagery using natural language. It uses a CLIP model to pre-compute embeddings for a set of image tiles, which are then indexed with Faiss. Faiss enables efficient nearest-neighbor searches, allowing the app to quickly compare a user’s text query embedding with the pre-computed image embeddings and identify the most relevant images.
 
-When a user searches, the relevant tiles are retrieved by searching the index. The boundaries on the map are then set to diplay just the area containing these results. The user can then click on the tiles in the map or in the side bar to zoom to that specific tile.
+When a user performs a search, relevant tiles are retrieved from the index. The map boundaries are then adjusted to display only the area containing these results. The user can click on a tile—either on the map or in the sidebar—to zoom directly to that specific tile.
 
 <p float="left">
-  <img src="./docs/images/canal_boats.png" width="600" />
-  <img src="./docs/images/canal_boat.png" width="600" />
+  <img src="./docs/images/canal_boats.png" width="800" />
+  <img src="./docs/images/canal_boat.png" width="800" />
 </p>
 
 ## Overview of Design
-1. Python Server. Best for use with PyTorch, the OpenAI CLIP library and geospatial libraries like RasterIO.
-2. React Typescript frontend. React is a popular frontend framework, used with styled components for quick modular styling. For this project, I was keen to experiment with TypeScript for the first time.
+1. **Python Server.** Best for use with PyTorch, the OpenAI CLIP library and geospatial libraries like RasterIO.
+2. **React Typescript frontend.** React is a popular frontend framework, used with styled components for quick modular styling. For this project, I was keen to experiment with TypeScript for the first time.
 
 ## Improvements
 1. **Speed up tile loading.** The tile loading is currently quite slow because the orthophoto is being opened for each new request.
 2. **Group together overlapping tiles.** Where tiles overlap, it's probably more intuitive to treat these tiles as one area that resolves to one result in side bar and one polygon on the map.
     <p float="left">
-        <img src="./docs/images/swimming_pool.png" width="600" />
+        <img src="./docs/images/swimming_pool.png" width="800" />
     </p>
-3. **Improve accuracy of the model.** At the moment, the model often surfaces false positives for some searches and misses some features in other searches. Other models may produce better performance and prompt engineering may help to refine results. Creating a test set of phrase/image pairs may help to identify the best model, prompt and similarity threshold.
+3. **Improve the accuracy of the model.** At the moment, the model often surfaces false positives for some searches and misses some features in other searches. Other models may produce better performance and prompt engineering may help to refine results. Creating a test set of phrase/image pairs may help to identify the best model, prompt and similarity threshold.
     <p float="left">
-        <img src="./docs/images/not_swimming_pool.png" width="600" />
-        <img src="./docs/images/car_park.png" width="600" />
+        <img src="./docs/images/not_swimming_pool.png" width="800" />
+        <img src="./docs/images/car_park.png" width="800" />
     </p>
 
 ## Run in Docker
-The whole app can be run with a few docker commands. The docker container is built on [Nvidia Pytorch Docker Containers](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch). Using these mitigates most of the dependency conflicts that can occur with different versions of CUDA and PyTorch. The one downside is they are quite large so it can take several minutes to pull the base container on first build. Also note that to use the GPUs inside a docker container, you need to ensure you have [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) installed on your machine.
+The entire app can be run using just a few Docker commands. The docker container is built on [Nvidia Pytorch Docker Containers](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch), which helps avoid most dependency conflicts that can arise from different CUDA and PyTorch versions. The main drawback is that these containers are quite large, so pulling the base image during the first build can take several minutes. Additionally, to use GPUs inside the Docker container, you must have the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) installed on your machine.
 
 To build docker container:
 ```
@@ -39,7 +39,7 @@ export SRC_PATH=/home/user/workspace/map_app
 export DATA_PATH=/home/user/workspace/labs-take-home-data
 ```
 
-Finally, run the docker container. It will take a couple of minutes to install everything, load the model and create the embeddings. Once it says application ready, the app should be available at `http://localhost:8080` .
+Finally, run the docker container. If you don't have a GPU, remove `--gpus all`; everything will run on the CPU just fine. It may take a couple of minutes to install dependencies, load the model, and create embeddings. Once the message “application ready” appears, the app should be available at `http://localhost:8080`.
 
 ```
 docker run -it --rm --gpus all --shm-size=4g -p 8080:8080 \
