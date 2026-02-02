@@ -104,21 +104,20 @@ def get_tile(z: int = Query(...), x: int = Query(...), y: int = Query(...)):
         to the client.
     """
     bounds = web_mercator_tile_bounds(x, y, z)
-    with rasterio.open(orthophoto_path) as src:
-        window = from_bounds(*bounds, transform=src.transform)
+    window = from_bounds(*bounds, transform=app.state.orthophoto.raster.transform)
 
-        data = src.read(
-            window=window,
-            out_shape=(src.count, 256, 256),
-            boundless=True,
-            fill_value=0
-        )
-        arr = np.transpose(data[:3], (1,2,0))
-        img = Image.fromarray(arr)
-        buf = io.BytesIO()
-        img.save(buf, format="PNG")
-        buf.seek(0)
-        return StreamingResponse(buf, media_type="image/png")
+    data = app.state.orthophoto.raster.read(
+        window=window,
+        out_shape=(app.state.orthophoto.raster.count, 256, 256),
+        boundless=True,
+        fill_value=0
+    )
+    arr = np.transpose(data[:3], (1,2,0))
+    img = Image.fromarray(arr)
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    buf.seek(0)
+    return StreamingResponse(buf, media_type="image/png")
 
 @app.get("/{full_path:path}")
 async def serve_frontend(full_path: str):

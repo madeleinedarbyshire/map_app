@@ -14,7 +14,7 @@ When a user performs a search, relevant tiles are retrieved from the index. The 
 2. **React Typescript frontend.** React is a popular frontend framework, used with styled components for quick modular styling. For this project, I was keen to experiment with TypeScript for the first time.
 
 ## Improvements To Be Made
-1. **Speed up tile loading.** The tile loading is currently quite slow because the orthophoto is being opened for each new request.
+1. **Speed up tile loading.** The tile loading is currently quite slow and could probably be optimised.
 2. **Group together overlapping tiles.** Where tiles overlap, it's probably more intuitive to treat these tiles as one area that resolves to one result in side bar and one polygon on the map.
     <p float="left">
         <img src="./docs/images/swimming_pool.png" width="800" />
