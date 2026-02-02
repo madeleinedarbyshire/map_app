@@ -49,11 +49,7 @@ docker run -it --rm --gpus all --shm-size=4g -p 8080:8080 \
     -v $SRC_PATH:/workspace/map_app \
     -v $DATA_PATH:/workspace/map_app/backend/data \
     map:latest \
-    bash -c "source /usr/local/nvm/nvm.sh \
-            && nvm use default \
-            && npm install --prefix frontend \
-            && npm run build --prefix frontend \
-            && python backend/create_embeddings.py \
+    bash -c "python backend/create_embeddings.py \
             && uvicorn backend.main:app --host 0.0.0.0 --port 8080 --log-level warning"
 
 ```
