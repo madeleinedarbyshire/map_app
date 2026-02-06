@@ -22,7 +22,7 @@ from rasterio.windows import from_bounds
 # Load default environment variables
 load_dotenv()
 orthophoto_path = os.getenv("ORTHOPHOTO_PATH", "backend/data/source_full.tif")
-clip_model = os.getenv("CLIP_MODEL", "backend/data/source_full.tif")
+clip_model = os.getenv("CLIP_MODEL", "ViT-B/32")
 
 # Initialise FastAPI
 app = FastAPI()
